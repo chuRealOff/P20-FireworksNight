@@ -38,12 +38,15 @@ class GameScene: SKScene {
         addChild(scoreLabel)
         
         gameTimer = Timer.scheduledTimer(timeInterval: 6, target: self, selector: #selector(launchFireworks), userInfo: nil, repeats: true)
-        
-        
     }
     
     @objc func launchFireworks() {
         let movementAmount: CGFloat = 1800
+        fireworkLaunches += 1
+        
+        if fireworkLaunches == 20 {
+            gameTimer?.invalidate()
+        }
         
         switch Int.random(in: 0...3) {
         case 0:
@@ -157,6 +160,11 @@ class GameScene: SKScene {
         if let emitter = SKEmitterNode(fileNamed: "explode") {
             emitter.position = firework.position
             addChild(emitter)
+            
+            let delay = SKAction.wait(forDuration: 1)
+            let removeExplosion = SKAction.removeFromParent()
+            let actionSequence = SKAction.sequence([delay, removeExplosion])
+            emitter.run(actionSequence)
         }
         firework.removeFromParent()
     }
